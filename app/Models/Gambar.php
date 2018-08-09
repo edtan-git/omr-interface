@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Gambar extends Model
 {
+    use SoftDeletes;
+
     public $timestamps = true;
     protected $table = 'gambar';
     protected $fillable = [
-        'nama', 'status'
+        'nama', 'status', 'meta_lik_id'
     ];
 
     // relationship
@@ -33,5 +36,10 @@ class Gambar extends Model
         }
 
         return $filename;
+    }
+
+    public function metaLik()
+    {
+        return $this->hasOne( \App\Models\MetaLik::class, 'id', 'meta_lik_id' );
     }
 }

@@ -16,8 +16,18 @@ Halaman Detail Gambar - Optical Mark Recognition
         <div>Waktu Unggah : {{ date( 'Y-m-d H:i:s', strtotime($gambar->created_at) ) }}</div>
         <div>Nama File : {{ $gambar->nama }}</div>
     </div>
+    <div class="">
+        @foreach( $list_ekstraksi as $ekstraksi )
+        <div>
+            <div>
+                <b>Waktu Ekstraksi : {{ $ekstraksi->created_at }}<b>
+            </div>
+            <div>
+                
+            </div>
+        </div>
+        @endforeach
+    </div>
     <div style="clear: both"></div>
-
-    <div class=""></div>
 </div>
 @endsection

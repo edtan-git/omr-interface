@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Gambar;
 use App\Models\Ekstraksi;
+use App\Models\MetaLik;
 
 class GambarController extends Controller
 {
@@ -13,10 +14,10 @@ class GambarController extends Controller
 
     public function index()
     {
-        $list_gambar = Gambar::all();
+        $list_gambar = Gambar::with('metaLik')->get();
 
         $data = [
-            'list_gambar' => $list_gambar
+            'list_gambar'   => $list_gambar,
         ];
 
         return view( 'gambar.index', $data );
@@ -32,5 +33,12 @@ class GambarController extends Controller
         ];
 
         return view( 'gambar.show', $data );
+    }
+
+    public function destroy( Gambar $gambar )
+    {
+        $gambar->delete();
+
+        return redirect()->route( 'gambar.index' );
     }
 }

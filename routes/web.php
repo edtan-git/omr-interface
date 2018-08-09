@@ -20,8 +20,17 @@ Route::group(['prefix' => 'gambar'], function(){
     Route::get( '/', 'GambarController@index' )->name( 'gambar.index' );
     Route::get( '/table', 'GambarController@indexTable' )->name( 'gambar.indexTable' );
     Route::get( '/{gambar}', 'GambarController@show' )->name( 'gambar.show' );
+    Route::get( '/{gambar}/delete', 'GambarController@destroy' )->name( 'gambar.destroy' );
+});
+
+Route::group(['prefix' => 'ekstrak'], function(){
+    Route::get( '/{gambar}', 'EkstrakController@ekstrak' )->name( 'ekstrak.index' );
 });
 
 Route::group(['prefix' => 'hasil-penilaian'], function(){
     Route::get( '/', 'HasilPenilaianController@index' )->name( 'hasil-penilaian.index' );
+});
+
+Route::group(['prefix' => 'dev-konversi-input'], function(){
+    Route::get( '/{gambar}/{ekstraksi}' , 'EkstrakController@convertInput');
 });

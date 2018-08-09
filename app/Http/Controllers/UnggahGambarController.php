@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Gambar;
+use App\Models\MetaLik;
 
 class UnggahGambarController extends Controller
 {
@@ -11,7 +12,11 @@ class UnggahGambarController extends Controller
 
     public function index()
     {
-        return view( 'unggah-gambar.index' );
+        $list_meta_lik = MetaLik::all();
+
+        return view( 'unggah-gambar.index', [
+            'list_meta_lik' => $list_meta_lik
+        ]);
     }
 
     public function store( Request $request )
@@ -24,8 +29,9 @@ class UnggahGambarController extends Controller
         $path = $request->file( 'gambar' )->storeAs( $this->direktori_ljk, $filename );
 
         Gambar::create([
-            'nama'   => $filename,
-            'status' => 0
+            'meta_lik_id' => $request->meta_lik_id,
+            'nama'        => $filename,
+            'status'      => 0
         ]);
 
         $this->createThumbnail( $filename );
