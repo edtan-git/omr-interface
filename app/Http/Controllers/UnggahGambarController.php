@@ -21,20 +21,21 @@ class UnggahGambarController extends Controller
 
     public function store( Request $request )
     {
-        $lembar_jawaban_komputer = $request->file( 'gambar' );
+        $list_lembar_jawaban_komputer = $request->file( 'gambar' );
 
-        $extension = $lembar_jawaban_komputer->getClientOriginalExtension();
-        $filename  = Gambar::createFileName() . '.' . $extension;
+        foreach( $list_lembar_jawaban_komputer as $index => $lembar_jawaban_komputer )
+        {
 
-        $path = $request->file( 'gambar' )->storeAs( $this->direktori_ljk, $filename );
-
-        Gambar::create([
-            'meta_lik_id' => $request->meta_lik_id,
-            'nama'        => $filename,
-            'status'      => 0
-        ]);
-
-        $this->createThumbnail( $filename );
+            $extension = $lembar_jawaban_komputer->getClientOriginalExtension();
+            $filename  = Gambar::createFileName() . '.' . $extension;
+            $path = $request->file( 'gambar' )[$index]->storeAs( $this->direktori_ljk, $filename );
+            Gambar::create([
+                'meta_lik_id' => $request->meta_lik_id,
+                'nama'        => $filename,
+                'status'      => 0
+            ]);
+            $this->createThumbnail( $filename );
+        }
 
         return redirect()->route( 'unggah-gambar.index' );
     }

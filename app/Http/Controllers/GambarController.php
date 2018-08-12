@@ -14,7 +14,7 @@ class GambarController extends Controller
 
     public function index()
     {
-        $list_gambar = Gambar::with('metaLik')->get();
+        $list_gambar = Gambar::with('metaLik', 'ekstraksiTerakhir')->get();
 
         $data = [
             'list_gambar'   => $list_gambar,

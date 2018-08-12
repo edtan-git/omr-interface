@@ -31,4 +31,9 @@ class Ekstraksi extends Model
     {
         return $this->hasMany( \App\Models\PilihanPaketSoal::class, 'id_ekstraksi', 'id' );
     }
+
+    public function pilihanJawaban()
+    {
+        return $this->hasMany( \App\Models\PilihanJawaban::class, 'id_ekstraksi', 'id' );
+    }
 }

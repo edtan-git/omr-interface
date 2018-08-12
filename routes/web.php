@@ -27,10 +27,16 @@ Route::group(['prefix' => 'ekstrak'], function(){
     Route::get( '/{gambar}', 'EkstrakController@ekstrak' )->name( 'ekstrak.index' );
 });
 
+Route::group(['prefix' => 'bulk-ektrak'], function(){
+    Route::get( '/', 'BulkEkstrakController@index' )->name( 'bulk-ekstrak.index' );
+    Route::post( '/', 'BulkEkstrakController@store' )->name( 'bulk-ekstrak.store' );
+});
+
 Route::group(['prefix' => 'hasil-penilaian'], function(){
     Route::get( '/', 'HasilPenilaianController@index' )->name( 'hasil-penilaian.index' );
 });
 
 Route::group(['prefix' => 'dev-konversi-input'], function(){
     Route::get( '/{gambar}/{ekstraksi}' , 'EkstrakController@convertInput');
+    Route::get( '/get-skor/{gambar}/{ekstraksi}' , 'EkstrakController@convertInputJawabanToSkor');
 });

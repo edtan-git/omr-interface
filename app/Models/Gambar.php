@@ -21,6 +21,11 @@ class Gambar extends Model
         return $this->hasMany( \App\Models\Ekstraksi::class, 'id_gambar', 'id' );
     }
 
+    public function ekstraksiTerakhir()
+    {
+        return $this->hasOne( \App\Models\Ekstraksi::class, 'id_gambar', 'id' )->orderBy( 'id', 'DESC');
+    }
+
     public static function createFileName()
     {
         $valid = false;

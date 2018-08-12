@@ -8,7 +8,7 @@ Halaman Unggah Gambar - Optical Mark Recognition
 <div>
     <form action="{{ route( 'unggah-gambar.store' ) }}" method="POST" enctype="multipart/form-data">
         {{ csrf_field() }}
-        <input type="file" name="gambar"><br>
+        <input type="file" name="gambar[]" multiple><br>
 
         @foreach( $list_meta_lik as $meta_lik )
         <div>

@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 
 use App\Models\Gambar;
 use App\Models\Ekstraksi;
+use App\Models\KunciJawabanDetail;
+use App\Models\PilihanJawabanDetail;
 
 class EkstrakController extends Controller
 {
@@ -27,10 +29,15 @@ class EkstrakController extends Controller
         'STUDENT_NUMBER' => 'convertInputNomorSiswa',
         'DATE_OF_BIRTH' => 'convertInputTanggalLahir',
         'PACKAGE_NUMBER' => 'convertInputPaketSoal',
-        'ANSWER' => 'convertInputJawaban',
+        'ANSWER' => 'convertInputJawabanToSkor',
     ];
 
-    public function ekstrak( Gambar $gambar )
+    public function bulkEkstrak( Request $request )
+    {
+        print_r( $request->all() );
+    }
+
+    public function ekstrak( Gambar $gambar, $queue = false )
     {
         $gambar->load('metaLik');
 
@@ -52,10 +59,15 @@ class EkstrakController extends Controller
         $ekstraksi->finished_at = date( 'Y-m-d H:i:s' );
 
         $ekstraksi = $this->convertInput($gambar, $ekstraksi);
-        // $ekstraksi = $this->convertInputNama($ekstraksi);
         $ekstraksi->save();
 
-        return redirect()->route( 'gambar.show', ['gambar' => $gambar] );
+        $gambar->status = 1;
+        $gambar->save();
+
+        if ( !$queue )
+            return redirect()->route( 'gambar.show', ['gambar' => $gambar] );
+        else
+            return true;
     }
 
     public function convertInput( Gambar $gambar, Ekstraksi $ekstraksi )
@@ -65,13 +77,16 @@ class EkstrakController extends Controller
         foreach( $gambar->metaLik->details as $meta_lik_detail )
         {
             $nama_input = $meta_lik_detail->nama;
-            $convertFunction = $this->input_convert_functions[$nama_input];
-            $this->$convertFunction( $ekstraksi );
+            if ( isset($this->input_convert_functions[$nama_input]) )
+            {
+                $convertFunction = $this->input_convert_functions[$nama_input];
+                $this->$convertFunction( $ekstraksi );
+            }
         }
 
         $ekstraksi->save();
 
-        // return $ekstraksi;
+        return $ekstraksi;
     }
 
     private function convertInputNama( Ekstraksi $ekstraksi )
@@ -107,7 +122,7 @@ class EkstrakController extends Controller
             if ( $details_count > 0 )
                 $index_opsi_terpilih = $pilihan_nomor_siswa->details[0]->index_opsi_terpilih;
             else
-                $index_opsi_terpilih = 11;
+                $index_opsi_terpilih = 10;
 
             $nomor_siswa .= $this->base_number[$index_opsi_terpilih];
         }
@@ -161,7 +176,7 @@ class EkstrakController extends Controller
             if ( $details_count > 0 )
                 $index_opsi_terpilih = $pilihan_paket_soal->details[0]->index_opsi_terpilih;
             else
-                $index_opsi_terpilih = 11;
+                $index_opsi_terpilih = 10;
 
             $paket_soal .= $this->base_number[$index_opsi_terpilih];
         }
@@ -172,9 +187,37 @@ class EkstrakController extends Controller
         return $ekstraksi;
     }
 
-    private function convertInputJawaban( Ekstraksi $ekstraksi )
+    public function convertInputJawabanToSkor( Ekstraksi $ekstraksi )
     {
+        $ekstraksi->load( 'pilihanJawaban.detail' );
+        $kunci_jawaban = KunciJawabanDetail::where('id_kunci_jawaban', 1)
+            ->get()
+            ->keyBy('nomor_soal')
+            ->toArray();
 
+        $pilihan_jawaban = $ekstraksi->pilihanJawaban->toArray();
+
+        $pilihan = '';
+        $poin = 0;
+        foreach( $pilihan_jawaban as $index => $item_pilihan_jawaban )
+        {
+            $nomor_soal = $index + 1;
+            $index_terpilih = '-';
+            if ( count($item_pilihan_jawaban['detail']) > 0 )
+                $index_terpilih = $item_pilihan_jawaban['detail']['index_opsi_terpilih'];
+
+            $pilihan .= $index_terpilih;
+            if (isset($kunci_jawaban[$nomor_soal]['index_pilihan_benar']) &&
+                $index_terpilih == $kunci_jawaban[$nomor_soal]['index_pilihan_benar'])
+            {
+                $poin += 1;
+                PilihanJawabanDetail::where('id_pilihan_jawaban', $item_pilihan_jawaban['detail']['id_pilihan_jawaban'])
+                    ->where('index_opsi_terpilih', $index_terpilih)
+                    ->update(['status_kebenaran' => true]);
+            }
+        }
+
+        $ekstraksi->skor = $poin * 2;
+        $ekstraksi->save();
     }
-
 }
