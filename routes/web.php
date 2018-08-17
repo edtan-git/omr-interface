@@ -40,3 +40,5 @@ Route::group(['prefix' => 'dev-konversi-input'], function(){
     Route::get( '/{gambar}/{ekstraksi}' , 'EkstrakController@convertInput');
     Route::get( '/get-skor/{gambar}/{ekstraksi}' , 'EkstrakController@convertInputJawabanToSkor');
 });
+
+Route::get('help-dev/{gambar}', 'HelpDevController@index');

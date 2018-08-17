@@ -144,7 +144,7 @@ class EkstrakController extends Controller
             if ( $details_count > 0 )
                 $index_opsi_terpilih = $pilihan_tanggal_lahir->details[0]->index_opsi_terpilih;
             else
-                $index_opsi_terpilih = 11;
+                $index_opsi_terpilih = 10;
 
             $tanggal_lahir .= $this->base_number[$index_opsi_terpilih];
         }

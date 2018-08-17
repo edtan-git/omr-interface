@@ -52,7 +52,7 @@ Hasil Penilaian
                     <td>{{ $gambar->ekstraksiTerakhir->nama == "" ? "" : $gambar->ekstraksiTerakhir->nama }}</td>
                     <td>{{ $gambar->ekstraksiTerakhir->nomor_siswa }}</td>
                     <td>{{ $gambar->ekstraksiTerakhir->tanggal_lahir == '0000-00-00' ? '-' : $gambar->ekstraksiTerakhir->tanggal_lahir }}</td>
-                    <td>{{ $gambar->ekstraksiTerakhir->paket_soal }}</td>
+                    <td>{{ $gambar->ekstraksiTerakhir->paket_soal == '' ? '-' : str_pad($gambar->ekstraksiTerakhir->paket_soal, 2, '0', STR_PAD_LEFT) }}</td>
                     <td>
                         <table border="1" cellpadding="2" cellspacing="0">
                             <tbody>
