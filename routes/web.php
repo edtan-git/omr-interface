@@ -42,3 +42,5 @@ Route::group(['prefix' => 'dev-konversi-input'], function(){
 });
 
 Route::get('help-dev/{gambar}', 'HelpDevController@index');
+Route::get('check-persentase/{gambar}', 'HelpDevController@cekPersentase');
+Route::get('export-excel', 'HelpDevController@createExcel');

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AlterTestCaseAnswerDetailAddIndexTerpilihColumn extends Migration
+class AlterTestCaseNullableTanggalLahir extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,8 @@ class AlterTestCaseAnswerDetailAddIndexTerpilihColumn extends Migration
     public function up()
     {
         //
-        Schema::table( 'test_case_answer_detail', function( Blueprint $table ){
-            $table->integer( 'index_terpilih' )->unsigned()->after( 'id_test_case_answer' );
+        Schema::table( 'test_case', function( Blueprint $table ){
+            $table->date( 'tanggal_lahir' )->nullable();
         });
     }
 

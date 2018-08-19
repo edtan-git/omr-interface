@@ -12,4 +12,9 @@ class MetaLik extends Model
     {
         return $this->hasMany( \App\Models\MetaLikDetail::class, 'id_meta_lik', 'id' );
     }
+
+    public function testCase()
+    {
+        return $this->hasOne( \App\Models\TestCase::class, 'id_meta_lik', 'id' );
+    }
 }
