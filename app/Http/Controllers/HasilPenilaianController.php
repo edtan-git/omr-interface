@@ -44,18 +44,64 @@ class HasilPenilaianController extends Controller
                 },
                 'metaLik'
             ])
+            ->where( 'status', 1 )
             ->where( 'created_at', '>=', $tanggal_unggah_start )
             ->where( 'created_at', '<=', $tanggal_unggah_end );
         if ( $request->has('layout_id') && $request->layout_id != 0 )  $list_gambar->where('meta_lik_id', $request->layout_id);
 
         $list_gambar = $list_gambar->get();
 
-        return view( 'hasil-penilaian.index', [
-            'list_meta_lik'  => $list_meta_lik,
-            'list_gambar'    => $list_gambar,
-            'base_alphabets' => $this->base_alphabets,
+        if ( $request->has('button') )
+        {
+            return \Excel::create('ExportFile', function( $excel ) use ($list_gambar){
+                $excel->sheet('sheet', function($sheet) use ($list_gambar){
+                    $sheet->loadView( 'hasil-penilaian.table', ['list_gambar' => $list_gambar] );
+                });
+            })->download( 'xls' );
+        }
+        else
+        {
+            return view( 'hasil-penilaian.index', [
+                'list_meta_lik'  => $list_meta_lik,
+                'list_gambar'    => $list_gambar,
+                'base_alphabets' => $this->base_alphabets,
+                
+                'request' => $request
+            ]);
+        }
+    }
 
-            'request' => $request
-        ]);
+    public function exportExcel()
+    {
+        if ( $request->has('tanggal_unggah') )
+        {
+            $tanggal_unggah_start = date( 'Y-m-d 00:00:00', strtotime($request->tanggal_unggah[0]) );
+            $tanggal_unggah_end = date( 'Y-m-d 23:59:59', strtotime($request->tanggal_unggah[1]) );
+        }
+        else
+        {
+            $tanggal_unggah_start = date( 'Y-m-d 00:00:00' );
+            $tanggal_unggah_end = date( 'Y-m-d 23:59:59' );
+        }
+        $list_meta_lik = MetaLik::all();
+
+        $list_gambar = Gambar::with([
+                'ekstraksiTerakhir.pilihanJawaban.detail' => function( $query )
+                {
+                    $query->select(
+                        'pilihan_jawaban_detail.id_pilihan_jawaban',
+                        'pilihan_jawaban_detail.index_opsi_terpilih',
+                        'pilihan_jawaban_detail.status_kebenaran'
+                    );
+                },
+                'metaLik'
+            ])
+            ->where( 'status', 1 )
+            ->where( 'created_at', '>=', $tanggal_unggah_start )
+            ->where( 'created_at', '<=', $tanggal_unggah_end );
+        if ( $request->has('layout_id') && $request->layout_id != 0 )  $list_gambar->where('meta_lik_id', $request->layout_id);
+
+        $list_gambar = $list_gambar->get();
+
     }
 }

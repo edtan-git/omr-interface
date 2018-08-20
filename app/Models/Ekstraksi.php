@@ -12,6 +12,11 @@ class Ekstraksi extends Model
         'id_gambar', 'nama', 'nomor_siswa', 'tanggal_lahir', 'paket_soal', 'skor', 'finished_at'
     ];
 
+    public function gambar()
+    {
+        return $this->belongsTo( \App\Models\Gambar::class, 'id_gambar', 'id' );
+    }
+
     public function pilihanNama()
     {
         return $this->hasMany( \App\Models\PilihanNama::class, 'id_ekstraksi', 'id' );

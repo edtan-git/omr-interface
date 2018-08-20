@@ -14,6 +14,15 @@ use App\Models\PilihanJawabanDetail;
 class EkstrakController extends Controller
 {
     protected $ekstraksi;
+    protected $kunci_jawaban_id = [
+        '01' => 1,
+        '02' => 2,
+        '03' => 3,
+        '04' => 4,
+        '05' => 5,
+        '06' => 6,
+        '07' => 7,
+    ];
     protected $base_alphabets = [
         'A', 'B', 'C', 'D', 'E', 'F',
         'G', 'H', 'I', 'J', 'K', 'L',
@@ -55,6 +64,11 @@ class EkstrakController extends Controller
             throw new ProcessFailedException( $process );
 
         $respons = json_decode($process->getOutput());
+        if ( property_exists($respons, 'status') )
+        {
+            return "Logo tidak ditemukan";
+            exit();
+        }
         $ekstraksi = Ekstraksi::findOrFail($respons->id_ekstraksi);
         $ekstraksi->finished_at = date( 'Y-m-d H:i:s' );
 
@@ -189,8 +203,13 @@ class EkstrakController extends Controller
 
     public function convertInputJawabanToSkor( Ekstraksi $ekstraksi )
     {
+        $ekstraksi->load('gambar.metaLik');
+        $gambar = $ekstraksi->gambar;
+        $layout_nama = $gambar->metaLik->nama;
+
+        $kunci_jawaban_id = $this->kunci_jawaban_id[$layout_nama];
         $ekstraksi->load( 'pilihanJawaban.detail' );
-        $kunci_jawaban = KunciJawabanDetail::where('id_kunci_jawaban', 1)
+        $kunci_jawaban = KunciJawabanDetail::where('id_kunci_jawaban', $kunci_jawaban_id)
             ->get()
             ->keyBy('nomor_soal')
             ->toArray();

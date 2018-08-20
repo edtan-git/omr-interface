@@ -38,9 +38,11 @@ Route::group(['prefix' => 'hasil-penilaian'], function(){
 
 Route::group(['prefix' => 'dev-konversi-input'], function(){
     Route::get( '/{gambar}/{ekstraksi}' , 'EkstrakController@convertInput');
-    Route::get( '/get-skor/{gambar}/{ekstraksi}' , 'EkstrakController@convertInputJawabanToSkor');
+    Route::get( '/get/skor/{ekstraksi}' , 'EkstrakController@convertInputJawabanToSkor');
 });
 
 Route::get('help-dev/{gambar}', 'HelpDevController@index');
 Route::get('check-persentase/{gambar}', 'HelpDevController@cekPersentase');
-Route::get('export-excel', 'HelpDevController@createExcel');
+// Route::get('export-excel', 'HelpDevController@createExcel');
+
+Route::get('export-excel', 'HasilPenilaianController@exportExcel')->name( 'exportExcel' );

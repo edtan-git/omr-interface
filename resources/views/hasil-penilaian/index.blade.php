@@ -24,6 +24,7 @@ Hasil Penilaian
             </select>
         </div>
         <button>Tampilkan Data</button>
+        <button name="button" value="export">Export Excel</button>
     </form>
 
     <div>
